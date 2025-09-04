@@ -3,19 +3,23 @@ import { Contraction } from '@/types/contraction';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trash2, Clock, Edit } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Trash2, Clock, Edit, Plus } from 'lucide-react';
 import { format, formatDuration, intervalToDuration } from 'date-fns';
 import { EditContractionDialog } from './EditContractionDialog';
+import { AddContractionDialog } from './AddContractionDialog';
 
 interface ContractionTableProps {
   contractions: Contraction[];
   onDelete: (id: string) => void;
   onEdit: (id: string, data: { startTime: Date; endTime: Date | null }) => void;
+  onAdd: (startTime: Date, endTime: Date | null) => void;
   onClearAll: () => void;
 }
 
-export function ContractionTable({ contractions, onDelete, onEdit, onClearAll }: ContractionTableProps) {
+export function ContractionTable({ contractions, onDelete, onEdit, onAdd, onClearAll }: ContractionTableProps) {
   const [editingContraction, setEditingContraction] = useState<Contraction | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
   const formatTime = (date: Date) => format(date, 'HH:mm:ss');
   
   const formatDurationFromSeconds = (seconds: number) => {
@@ -48,14 +52,45 @@ export function ContractionTable({ contractions, onDelete, onEdit, onClearAll }:
           <Clock className="w-5 h-5" />
           Contraction History ({contractions.length})
         </CardTitle>
-        <Button 
-          onClick={onClearAll} 
-          variant="outline" 
-          size="sm"
-          className="text-destructive hover:text-destructive"
-        >
-          Clear All
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={() => setShowAddDialog(true)}
+            variant="outline" 
+            size="sm"
+            className="text-primary hover:text-primary"
+          >
+            <Plus className="w-4 h-4 mr-1" />
+            Add Manual
+          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="text-destructive hover:text-destructive"
+              >
+                Clear All
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Clear All Contractions?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete all your contraction history. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={onClearAll}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Clear All
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </CardHeader>
       
       <CardContent>
@@ -113,6 +148,12 @@ export function ContractionTable({ contractions, onDelete, onEdit, onClearAll }:
         open={!!editingContraction}
         onClose={() => setEditingContraction(null)}
         onSave={onEdit}
+      />
+
+      <AddContractionDialog
+        open={showAddDialog}
+        onClose={() => setShowAddDialog(false)}
+        onAdd={onAdd}
       />
     </Card>
   );

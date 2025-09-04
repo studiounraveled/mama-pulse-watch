@@ -14,6 +14,7 @@ const Index = () => {
     stopContraction,
     deleteContraction,
     editContraction,
+    addManualContraction,
     clearAllContractions,
     getSummary,
   } = useContractions();
@@ -70,6 +71,7 @@ const Index = () => {
             contractions={contractions}
             onDelete={deleteContraction}
             onEdit={editContraction}
+            onAdd={addManualContraction}
             onClearAll={clearAllContractions}
           />
         </section>

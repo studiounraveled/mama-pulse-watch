@@ -68,6 +68,23 @@ export function useContractions() {
     }));
   };
 
+  const addManualContraction = (startTime: Date, endTime: Date | null) => {
+    const duration = endTime 
+      ? Math.round((endTime.getTime() - startTime.getTime()) / 1000)
+      : null;
+    
+    const newContraction: Contraction = {
+      id: crypto.randomUUID(),
+      startTime,
+      endTime,
+      duration,
+    };
+
+    setContractions(prev => [newContraction, ...prev].sort((a, b) => 
+      b.startTime.getTime() - a.startTime.getTime()
+    ));
+  };
+
   const clearAllContractions = () => {
     setContractions([]);
     setCurrentContraction(null);
@@ -117,6 +134,7 @@ export function useContractions() {
     stopContraction,
     deleteContraction,
     editContraction,
+    addManualContraction,
     clearAllContractions,
     getSummary,
   };
