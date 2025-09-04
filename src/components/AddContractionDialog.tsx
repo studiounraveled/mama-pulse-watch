@@ -110,7 +110,7 @@ export function AddContractionDialog({ open, onClose, onAdd }: AddContractionDia
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
