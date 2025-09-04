@@ -50,6 +50,24 @@ export function useContractions() {
     setContractions(prev => prev.filter(c => c.id !== id));
   };
 
+  const editContraction = (id: string, updatedData: { startTime: Date; endTime: Date | null }) => {
+    setContractions(prev => prev.map(contraction => {
+      if (contraction.id === id) {
+        const duration = updatedData.endTime 
+          ? Math.round((updatedData.endTime.getTime() - updatedData.startTime.getTime()) / 1000)
+          : null;
+        
+        return {
+          ...contraction,
+          startTime: updatedData.startTime,
+          endTime: updatedData.endTime,
+          duration,
+        };
+      }
+      return contraction;
+    }));
+  };
+
   const clearAllContractions = () => {
     setContractions([]);
     setCurrentContraction(null);
@@ -98,6 +116,7 @@ export function useContractions() {
     startContraction,
     stopContraction,
     deleteContraction,
+    editContraction,
     clearAllContractions,
     getSummary,
   };

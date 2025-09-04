@@ -1,17 +1,21 @@
+import { useState } from 'react';
 import { Contraction } from '@/types/contraction';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Trash2, Clock } from 'lucide-react';
+import { Trash2, Clock, Edit } from 'lucide-react';
 import { format, formatDuration, intervalToDuration } from 'date-fns';
+import { EditContractionDialog } from './EditContractionDialog';
 
 interface ContractionTableProps {
   contractions: Contraction[];
   onDelete: (id: string) => void;
+  onEdit: (id: string, data: { startTime: Date; endTime: Date | null }) => void;
   onClearAll: () => void;
 }
 
-export function ContractionTable({ contractions, onDelete, onClearAll }: ContractionTableProps) {
+export function ContractionTable({ contractions, onDelete, onEdit, onClearAll }: ContractionTableProps) {
+  const [editingContraction, setEditingContraction] = useState<Contraction | null>(null);
   const formatTime = (date: Date) => format(date, 'HH:mm:ss');
   
   const formatDurationFromSeconds = (seconds: number) => {
@@ -62,7 +66,7 @@ export function ContractionTable({ contractions, onDelete, onClearAll }: Contrac
                 <TableHead>Start Time</TableHead>
                 <TableHead>End Time</TableHead>
                 <TableHead>Duration</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead className="w-[120px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -78,14 +82,24 @@ export function ContractionTable({ contractions, onDelete, onClearAll }: Contrac
                     {contraction.duration ? formatDurationFromSeconds(contraction.duration) : 'In progress'}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      onClick={() => onDelete(contraction.id)}
-                      variant="ghost"
-                      size="sm"
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        onClick={() => setEditingContraction(contraction)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-primary hover:text-primary"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        onClick={() => onDelete(contraction.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -93,6 +107,13 @@ export function ContractionTable({ contractions, onDelete, onClearAll }: Contrac
           </Table>
         </div>
       </CardContent>
+
+      <EditContractionDialog
+        contraction={editingContraction}
+        open={!!editingContraction}
+        onClose={() => setEditingContraction(null)}
+        onSave={onEdit}
+      />
     </Card>
   );
 }

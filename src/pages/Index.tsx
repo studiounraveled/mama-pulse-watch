@@ -13,6 +13,7 @@ const Index = () => {
     startContraction,
     stopContraction,
     deleteContraction,
+    editContraction,
     clearAllContractions,
     getSummary,
   } = useContractions();
@@ -68,6 +69,7 @@ const Index = () => {
           <ContractionTable
             contractions={contractions}
             onDelete={deleteContraction}
+            onEdit={editContraction}
             onClearAll={clearAllContractions}
           />
         </section>
