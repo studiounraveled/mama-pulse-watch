@@ -31,7 +31,7 @@ const Index = () => {
             </div>
             <div className="text-center">
               <h1 className="text-3xl font-bold text-foreground">
-                Contraction Tracker
+                Contracktion
               </h1>
               <p className="text-muted-foreground text-sm mt-1">
                 Monitor your labor progress with precision
