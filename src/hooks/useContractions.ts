@@ -34,13 +34,17 @@ export function useContractions() {
       const endTime = new Date();
       const duration = Math.round((endTime.getTime() - currentContraction.startTime.getTime()) / 1000);
       
-      const completedContraction: Contraction = {
-        ...currentContraction,
-        endTime,
-        duration,
-      };
+      // Only record contractions that are at least 1 second long
+      if (duration >= 1) {
+        const completedContraction: Contraction = {
+          ...currentContraction,
+          endTime,
+          duration,
+        };
 
-      setContractions(prev => [completedContraction, ...prev]);
+        setContractions(prev => [completedContraction, ...prev]);
+      }
+      
       setCurrentContraction(null);
       setIsTracking(false);
     }
