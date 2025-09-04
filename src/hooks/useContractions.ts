@@ -3,7 +3,18 @@ import { Contraction, ContractionSummary } from '@/types/contraction';
 import { useLocalStorage } from './useLocalStorage';
 
 export function useContractions() {
-  const [contractions, setContractions] = useLocalStorage<Contraction[]>('contractions', []);
+  const [storedContractions, setStoredContractions] = useLocalStorage<Contraction[]>('contractions', []);
+  
+  // Convert date strings back to Date objects when loading from localStorage
+  const contractions = storedContractions.map(contraction => ({
+    ...contraction,
+    startTime: new Date(contraction.startTime),
+    endTime: contraction.endTime ? new Date(contraction.endTime) : null,
+  }));
+
+  const setContractions = (value: Contraction[] | ((prev: Contraction[]) => Contraction[])) => {
+    setStoredContractions(value);
+  };
   const [currentContraction, setCurrentContraction] = useState<Contraction | null>(null);
   const [isTracking, setIsTracking] = useState(false);
 
