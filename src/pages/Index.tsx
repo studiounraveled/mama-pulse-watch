@@ -46,7 +46,7 @@ const Index = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Timer Section with Compact Stats */}
-        <section className="max-w-md mx-auto">
+        <section className="md:max-w-md mx-auto">
           <CompactStats summary={summary} />
           <ContractionTimer
             isTracking={isTracking}
