@@ -1,6 +1,6 @@
 import { useContractions } from '@/hooks/useContractions';
 import { ContractionTimer } from '@/components/ContractionTimer';
-import { ContractionSummary } from '@/components/ContractionSummary';
+import { CompactStats } from '@/components/CompactStats';
 import { ContractionTable } from '@/components/ContractionTable';
 import { ContractionChart } from '@/components/ContractionChart';
 import { Baby, Heart } from 'lucide-react';
@@ -45,8 +45,9 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Timer Section */}
+        {/* Timer Section with Compact Stats */}
         <section className="max-w-md mx-auto">
+          <CompactStats summary={summary} />
           <ContractionTimer
             isTracking={isTracking}
             onStart={startContraction}
@@ -55,17 +56,7 @@ const Index = () => {
           />
         </section>
 
-        {/* Summary Cards */}
-        <section>
-          <ContractionSummary summary={summary} />
-        </section>
-
-        {/* Charts */}
-        <section>
-          <ContractionChart contractions={contractions} />
-        </section>
-
-        {/* Table */}
+        {/* Table - moved up for easier access */}
         <section>
           <ContractionTable
             contractions={contractions}
@@ -74,6 +65,11 @@ const Index = () => {
             onAdd={addManualContraction}
             onClearAll={clearAllContractions}
           />
+        </section>
+
+        {/* Charts - moved down */}
+        <section>
+          <ContractionChart contractions={contractions} />
         </section>
       </main>
 
