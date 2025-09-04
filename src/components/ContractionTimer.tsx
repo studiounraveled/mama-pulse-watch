@@ -77,7 +77,7 @@ export function ContractionTimer({ isTracking, onStart, onStop, startTime }: Con
             <Button 
               onClick={onStop}
               variant="destructive"
-              className="animate-pulse w-32 h-32 rounded-full text-xl font-bold shadow-lg hover:scale-105 transition-all duration-200 active:scale-95"
+              className="animate-pulse w-32 h-32 rounded-full text-xl font-bold shadow-lg hover:scale-105 transition-all active:scale-95"
             >
               <div className="flex flex-col items-center gap-2">
                 <Square className="w-8 h-8" />
