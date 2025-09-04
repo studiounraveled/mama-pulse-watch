@@ -1,14 +1,52 @@
 import { Contraction } from '@/types/contraction';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, Download } from 'lucide-react';
 import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
 
 interface ContractionChartProps {
   contractions: Contraction[];
 }
 
 export function ContractionChart({ contractions }: ContractionChartProps) {
+  const exportToExcel = () => {
+    const exportData = contractions
+      .filter(c => c.duration !== null)
+      .map((contraction, index) => ({
+        'Contraction #': index + 1,
+        'Start Time': format(new Date(contraction.startTime), 'yyyy-MM-dd HH:mm:ss'),
+        'End Time': contraction.endTime ? format(new Date(contraction.endTime), 'yyyy-MM-dd HH:mm:ss') : '',
+        'Duration (seconds)': contraction.duration,
+        'Duration (mm:ss)': contraction.duration ? `${Math.floor(contraction.duration / 60)}:${(contraction.duration % 60).toString().padStart(2, '0')}` : '',
+      }));
+
+    // Add intervals
+    const dataWithIntervals = exportData.map((row, index) => {
+      if (index > 0) {
+        const currentContraction = contractions.filter(c => c.duration !== null)[index];
+        const previousContraction = contractions.filter(c => c.duration !== null)[index - 1];
+        const intervalMinutes = (new Date(currentContraction.startTime).getTime() - new Date(previousContraction.startTime).getTime()) / (1000 * 60);
+        return {
+          ...row,
+          'Interval (minutes)': Math.round(intervalMinutes * 10) / 10,
+        };
+      }
+      return {
+        ...row,
+        'Interval (minutes)': '',
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(dataWithIntervals);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Contractions');
+    
+    const fileName = `contractions_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+  };
+
   if (contractions.length === 0) {
     return (
       <Card>
@@ -52,7 +90,26 @@ export function ContractionChart({ contractions }: ContractionChartProps) {
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="space-y-4">
+      {/* Analytics Header with Export Button */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <BarChart3 className="w-6 h-6" />
+            Contraction Analytics
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            Visual analysis of your contraction patterns
+          </p>
+        </div>
+        <Button onClick={exportToExcel} variant="outline" className="flex items-center gap-2">
+          <Download className="w-4 h-4" />
+          Export to Excel
+        </Button>
+      </div>
+
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -138,6 +195,7 @@ export function ContractionChart({ contractions }: ContractionChartProps) {
           </CardContent>
         </Card>
       )}
+      </div>
     </div>
   );
 }
