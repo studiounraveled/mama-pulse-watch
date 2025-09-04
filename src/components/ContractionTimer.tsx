@@ -61,26 +61,28 @@ export function ContractionTimer({ isTracking, onStart, onStop, startTime }: Con
           )}
         </div>
 
-        <div className="flex gap-4 justify-center">
+        <div className="flex justify-center">
           {!isTracking ? (
             <Button 
               onClick={onStart}
               variant="secondary"
-              size="lg"
-              className="px-8 py-6 text-lg font-semibold"
+              className="w-32 h-32 rounded-full text-xl font-bold shadow-lg hover:scale-105 transition-all duration-200 active:scale-95"
             >
-              <Play className="w-6 h-6 mr-2" />
-              Start Contraction
+              <div className="flex flex-col items-center gap-2">
+                <Play className="w-8 h-8" />
+                <span className="text-sm">Start</span>
+              </div>
             </Button>
           ) : (
             <Button 
               onClick={onStop}
               variant="destructive"
-              size="lg"
-              className="px-8 py-6 text-lg font-semibold"
+              className="w-32 h-32 rounded-full text-xl font-bold shadow-lg hover:scale-105 transition-all duration-200 active:scale-95"
             >
-              <Square className="w-6 h-6 mr-2" />
-              Stop Contraction
+              <div className="flex flex-col items-center gap-2">
+                <Square className="w-8 h-8" />
+                <span className="text-sm">Stop</span>
+              </div>
             </Button>
           )}
         </div>
