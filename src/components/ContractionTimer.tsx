@@ -70,7 +70,7 @@ export function ContractionTimer({ isTracking, onStart, onStop, startTime }: Con
             >
               <div className="flex flex-col items-center gap-2">
                 <Play className="w-8 h-8" />
-                <span className="text-sm">Start</span>
+                <span className="text-xl">Start</span>
               </div>
             </Button>
           ) : (
@@ -81,7 +81,7 @@ export function ContractionTimer({ isTracking, onStart, onStop, startTime }: Con
             >
               <div className="flex flex-col items-center gap-2">
                 <Square className="w-8 h-8" />
-                <span className="text-sm">Stop</span>
+                <span className="text-xl">Stop</span>
               </div>
             </Button>
           )}
