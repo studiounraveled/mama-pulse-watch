@@ -146,7 +146,32 @@ export function ContractionTable({ contractions, onDelete, onEdit, onAdd, onClea
                     {contraction.duration ? formatDurationFromSeconds(contraction.duration) : 'In progress'}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
+                    {/* Mobile dropdown (screens < 768px) */}
+                    <div className="md:hidden">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-background border shadow-md">
+                          <DropdownMenuItem onClick={() => setEditingContraction(contraction)}>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => onDelete(contraction.id)}
+                            className="text-destructive focus:text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+
+                    {/* Desktop buttons (screens >= 768px) */}
+                    <div className="hidden md:flex gap-1">
                       <Button
                         onClick={() => setEditingContraction(contraction)}
                         variant="ghost"
