@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Trash2, Clock, Edit, Plus } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Trash2, Clock, Edit, Plus, MoreVertical } from 'lucide-react';
 import { format, formatDuration, intervalToDuration } from 'date-fns';
 import { EditContractionDialog } from './EditContractionDialog';
 import { AddContractionDialog } from './AddContractionDialog';
@@ -20,6 +21,7 @@ interface ContractionTableProps {
 export function ContractionTable({ contractions, onDelete, onEdit, onAdd, onClearAll }: ContractionTableProps) {
   const [editingContraction, setEditingContraction] = useState<Contraction | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
   const formatTime = (date: Date) => format(date, 'HH:mm:ss');
   
   const formatDurationFromSeconds = (seconds: number) => {
@@ -53,43 +55,70 @@ export function ContractionTable({ contractions, onDelete, onEdit, onAdd, onClea
           Contraction History ({contractions.length})
         </CardTitle>
         <div className="flex gap-2">
-          <Button 
-            onClick={() => setShowAddDialog(true)}
-            variant="outline" 
-            size="sm"
-            className="text-primary hover:text-primary"
-          >
-            <Plus className="w-4 h-4 mr-1" />
-            Add Manual
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="text-destructive hover:text-destructive"
-              >
-                Clear All
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Clear All Contractions?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will permanently delete all your contraction history. This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction 
-                  onClick={onClearAll}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          {/* Mobile dropdown (screens < 768px) */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-background border shadow-md">
+                <DropdownMenuItem onClick={() => setShowAddDialog(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Manual
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setShowClearDialog(true)}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Clear All
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Desktop buttons (screens >= 768px) */}
+          <div className="hidden md:flex gap-2">
+            <Button 
+              onClick={() => setShowAddDialog(true)}
+              variant="outline" 
+              size="sm"
+              className="text-primary hover:text-primary"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add Manual
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="text-destructive hover:text-destructive"
                 >
                   Clear All
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Clear All Contractions?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete all your contraction history. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={onClearAll}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Clear All
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
         </div>
       </CardHeader>
       
@@ -155,6 +184,30 @@ export function ContractionTable({ contractions, onDelete, onEdit, onAdd, onClea
         onClose={() => setShowAddDialog(false)}
         onAdd={onAdd}
       />
+
+      {/* Clear All Dialog for mobile dropdown */}
+      <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clear All Contractions?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete all your contraction history. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                onClearAll();
+                setShowClearDialog(false);
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Clear All
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
